@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mA6-6u-4Ms">
+                                <rect key="frame" x="137" y="90" width="100" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="eVW-rG-cj6"/>
+                                    <constraint firstAttribute="width" secondItem="mA6-6u-4Ms" secondAttribute="height" id="kht-P4-kzz"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="Siri_icon.png"/>
+                                <connections>
+                                    <action selector="microPhoneTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zaZ-c4-sAL"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="15" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0UW-r6-zS0">
+                                <rect key="frame" x="37.5" y="271.5" width="300" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="22"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ボタンを押してください" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i57-eD-XlX">
+                                <rect key="frame" x="86.5" y="200" width="202" height="21.5"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RESPONSE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ogS-LH-JJq">
+                                <rect key="frame" x="37.5" y="321.5" width="86.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mJ6-ue-HG2">
+                                <rect key="frame" x="37" y="362.5" width="58" height="26"/>
+                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="21"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.023529411764705882" green="0.14901960784313725" blue="0.24313725490196078" alpha="0.92283818493150682" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="i57-eD-XlX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="6G4-l2-7gf"/>
+                            <constraint firstItem="mJ6-ue-HG2" firstAttribute="top" secondItem="ogS-LH-JJq" secondAttribute="bottom" constant="20" id="TPY-kh-jNO"/>
+                            <constraint firstItem="i57-eD-XlX" firstAttribute="top" secondItem="mA6-6u-4Ms" secondAttribute="bottom" constant="10" id="XWU-OG-ZdN"/>
+                            <constraint firstItem="mA6-6u-4Ms" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ZiB-Iv-YNa"/>
+                            <constraint firstItem="0UW-r6-zS0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cBU-iD-are"/>
+                            <constraint firstItem="mJ6-ue-HG2" firstAttribute="leading" secondItem="ogS-LH-JJq" secondAttribute="leading" id="elv-eA-sYb"/>
+                            <constraint firstItem="0UW-r6-zS0" firstAttribute="top" secondItem="i57-eD-XlX" secondAttribute="bottom" constant="50" id="ibE-BE-9Tn"/>
+                            <constraint firstItem="mA6-6u-4Ms" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="70" id="qPz-7a-2OS"/>
+                            <constraint firstItem="ogS-LH-JJq" firstAttribute="top" secondItem="0UW-r6-zS0" secondAttribute="bottom" constant="50" id="sV0-2G-m1K"/>
+                            <constraint firstItem="0UW-r6-zS0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.8" id="wAK-8h-rKU"/>
+                            <constraint firstItem="ogS-LH-JJq" firstAttribute="leading" secondItem="0UW-r6-zS0" secondAttribute="leading" id="xAV-mM-zhe"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="regconizedText" destination="0UW-r6-zS0" id="N08-Bu-nlZ"/>
+                        <outlet property="regconizerKeyResponse" destination="mJ6-ue-HG2" id="maA-29-aZR"/>
+                        <outlet property="regconizerStatus" destination="i57-eD-XlX" id="cj9-gK-JJm"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="103.89805097451276"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Siri_icon.png" width="901" height="901"/>
+    </resources>
+</document>
