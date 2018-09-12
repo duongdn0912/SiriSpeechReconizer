@@ -18,7 +18,6 @@
 		45A128511EBEB22B00617E86 /* SpeechTestUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45A128501EBEB22B00617E86 /* SpeechTestUITests.m */; };
 		61A23FFD4963CD3696D24CFE /* libPods-SpeechTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 299509D9098A8B7DB177C00A /* libPods-SpeechTest.a */; };
 		9235FF12DE706CFBBCE1AE4F /* libPods-SpeechTestTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FE86953AD43620819413E7E /* libPods-SpeechTestTests.a */; };
-		A5809A3121422499001784EB /* Siri_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A5809A3021422499001784EB /* Siri_icon.png */; };
 		A5809A3421424E70001784EB /* ApiClients.m in Sources */ = {isa = PBXBuildFile; fileRef = A5809A3221424E70001784EB /* ApiClients.m */; };
 		A5F3AFB12148B97100165EAF /* IntentHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = A5F3AFB02148B97100165EAF /* IntentHandler.m */; };
 		A5F3AFB92148B97100165EAF /* IntentsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5F3AFB82148B97100165EAF /* IntentsUI.framework */; };
@@ -26,6 +25,7 @@
 		A5F3AFC02148B97100165EAF /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5F3AFBE2148B97100165EAF /* MainInterface.storyboard */; };
 		A5F3AFC42148B97100165EAF /* SampleIntentsUI.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A5F3AFB72148B97100165EAF /* SampleIntentsUI.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A5F3AFC72148B97100165EAF /* SampleIntents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A5F3AFAD2148B97100165EAF /* SampleIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A5F3AFCF2148EFAB00165EAF /* Siri_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A5F3AFCE2148EFAB00165EAF /* Siri_icon.png */; };
 		AB9EA6D565EC203AAF23DC28 /* libPods-SpeechTestUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24C3D60266CF087BBB8F6EEA /* libPods-SpeechTestUITests.a */; };
 /* End PBXBuildFile section */
 
@@ -100,7 +100,6 @@
 		6FE86953AD43620819413E7E /* libPods-SpeechTestTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SpeechTestTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FA055F5B0CD6F402E9EBC13 /* Pods-SpeechTestTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTestTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTestTests/Pods-SpeechTestTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8F7856AABD0391D5B9B1F434 /* Pods-SpeechTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTestUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTestUITests/Pods-SpeechTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		A5809A3021422499001784EB /* Siri_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Siri_icon.png; path = ../../../../Desktop/Siri_icon.png; sourceTree = "<group>"; };
 		A5809A3221424E70001784EB /* ApiClients.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiClients.m; sourceTree = "<group>"; };
 		A5809A3321424E70001784EB /* ApiClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiClients.h; sourceTree = "<group>"; };
 		A5C014602147AE9A00C77C2E /* SpeechTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SpeechTest.entitlements; sourceTree = "<group>"; };
@@ -115,6 +114,7 @@
 		A5F3AFBC2148B97100165EAF /* IntentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntentViewController.m; sourceTree = "<group>"; };
 		A5F3AFBF2148B97100165EAF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		A5F3AFC12148B97100165EAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A5F3AFCE2148EFAB00165EAF /* Siri_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Siri_icon.png; path = image/Siri_icon.png; sourceTree = "<group>"; };
 		CD537711103AB44C20885D1B /* Pods-SpeechTestUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTestUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTestUITests/Pods-SpeechTestUITests.release.xcconfig"; sourceTree = "<group>"; };
 		F4A38D417B2C5040E491381F /* Pods-SpeechTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTest/Pods-SpeechTest.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -251,7 +251,7 @@
 		A5809A2F21422485001784EB /* image */ = {
 			isa = PBXGroup;
 			children = (
-				A5809A3021422499001784EB /* Siri_icon.png */,
+				A5F3AFCE2148EFAB00165EAF /* Siri_icon.png */,
 			);
 			name = image;
 			sourceTree = "<group>";
@@ -446,10 +446,10 @@
 			projectRoot = "";
 			targets = (
 				45A128241EBEB22B00617E86 /* SpeechTest */,
-				45A128401EBEB22B00617E86 /* SpeechTestTests */,
-				45A1284B1EBEB22B00617E86 /* SpeechTestUITests */,
 				A5F3AFAC2148B97100165EAF /* SampleIntents */,
 				A5F3AFB62148B97100165EAF /* SampleIntentsUI */,
+				45A128401EBEB22B00617E86 /* SpeechTestTests */,
+				45A1284B1EBEB22B00617E86 /* SpeechTestUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -460,9 +460,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				45A1283B1EBEB22B00617E86 /* LaunchScreen.storyboard in Resources */,
-				A5809A3121422499001784EB /* Siri_icon.png in Resources */,
 				45A128381EBEB22B00617E86 /* Assets.xcassets in Resources */,
 				45A128331EBEB22B00617E86 /* Main.storyboard in Resources */,
+				A5F3AFCF2148EFAB00165EAF /* Siri_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
