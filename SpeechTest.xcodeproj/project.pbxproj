@@ -17,6 +17,9 @@
 		45A128461EBEB22B00617E86 /* SpeechTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45A128451EBEB22B00617E86 /* SpeechTestTests.m */; };
 		45A128511EBEB22B00617E86 /* SpeechTestUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45A128501EBEB22B00617E86 /* SpeechTestUITests.m */; };
 		61A23FFD4963CD3696D24CFE /* libPods-SpeechTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 299509D9098A8B7DB177C00A /* libPods-SpeechTest.a */; };
+		844144E42148CA8D00BB4552 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 844144E32148CA8D00BB4552 /* Intents.intentdefinition */; };
+		844144E52148CC8400BB4552 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 844144E32148CA8D00BB4552 /* Intents.intentdefinition */; };
+		844144E62148CC8500BB4552 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 844144E32148CA8D00BB4552 /* Intents.intentdefinition */; };
 		9235FF12DE706CFBBCE1AE4F /* libPods-SpeechTestTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FE86953AD43620819413E7E /* libPods-SpeechTestTests.a */; };
 		A5809A3121422499001784EB /* Siri_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A5809A3021422499001784EB /* Siri_icon.png */; };
 		A5809A3421424E70001784EB /* ApiClients.m in Sources */ = {isa = PBXBuildFile; fileRef = A5809A3221424E70001784EB /* ApiClients.m */; };
@@ -99,6 +102,7 @@
 		62A2356E541678F5C58F2E6F /* Pods-SpeechTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTest/Pods-SpeechTest.debug.xcconfig"; sourceTree = "<group>"; };
 		6FE86953AD43620819413E7E /* libPods-SpeechTestTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SpeechTestTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FA055F5B0CD6F402E9EBC13 /* Pods-SpeechTestTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTestTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTestTests/Pods-SpeechTestTests.debug.xcconfig"; sourceTree = "<group>"; };
+		844144E32148CA8D00BB4552 /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
 		8F7856AABD0391D5B9B1F434 /* Pods-SpeechTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpeechTestUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpeechTestUITests/Pods-SpeechTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		A5809A3021422499001784EB /* Siri_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Siri_icon.png; path = ../../../../Desktop/Siri_icon.png; sourceTree = "<group>"; };
 		A5809A3221424E70001784EB /* ApiClients.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiClients.m; sourceTree = "<group>"; };
@@ -217,6 +221,7 @@
 				45A1283C1EBEB22B00617E86 /* Info.plist */,
 				45A128341EBEB22B00617E86 /* SpeechTest.xcdatamodeld */,
 				45A128281EBEB22B00617E86 /* Supporting Files */,
+				844144E32148CA8D00BB4552 /* Intents.intentdefinition */,
 			);
 			path = SpeechTest;
 			sourceTree = "<group>";
@@ -559,6 +564,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				844144E42148CA8D00BB4552 /* Intents.intentdefinition in Sources */,
 				A5809A3421424E70001784EB /* ApiClients.m in Sources */,
 				45A128301EBEB22B00617E86 /* ViewController.m in Sources */,
 				45A1282D1EBEB22B00617E86 /* AppDelegate.m in Sources */,
@@ -587,6 +593,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				844144E52148CC8400BB4552 /* Intents.intentdefinition in Sources */,
 				A5F3AFB12148B97100165EAF /* IntentHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -595,6 +602,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				844144E62148CC8500BB4552 /* Intents.intentdefinition in Sources */,
 				A5F3AFBD2148B97100165EAF /* IntentViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
