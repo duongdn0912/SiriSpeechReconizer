@@ -1,6 +1,9 @@
 #import "ViewController.h"
 #import "PXSiriWave.h"
 #import "ApiClients.h"
+#import <Intents/Intents.h>
+#import "OrderAMenuIntent.h"
+#import "SendAnOrderMessageIntent.h"
 
 @interface ViewController ()
     @property (weak, nonatomic) IBOutlet UILabel *regconizedText;
@@ -46,8 +49,86 @@
         }
     }];
     
+//    [self donateInteraction];
+//    [self donateRelevantShortcut];
+//    [self donateDefaultSendMessageInteration];
+}
+
+- (void)donateRelevantShortcut {
+    OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
+    intent.food = @"cake";
+    intent.drink = @"cheese";
     
+    INShortcut *shortcut = [[INShortcut alloc] initWithIntent:intent];
     
+    INRelevantShortcut *relevantShortcut = [[INRelevantShortcut alloc] initWithShortcut:shortcut];
+    relevantShortcut.relevanceProviders = @[[[INDailyRoutineRelevanceProvider alloc] initWithSituation:INDailyRoutineSituationEvening]];
+    [[INRelevantShortcutStore defaultStore] setRelevantShortcuts:@[relevantShortcut] completionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"error with donate relevant shortcut");
+        } else {
+            NSLog(@"succeed in donate relevant shortcut");
+        }
+        
+    }];
+    
+}
+
+- (void)donateDefaultSendMessageInteration {
+    INSendMessageIntent *intent = [[INSendMessageIntent alloc] init];
+//    intent.food = @"cake";
+    //    intent.drink = @"orange";
+    intent.suggestedInvocationPhrase = @"Order coffee";
+    
+    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
+    
+    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
+        //        if (error != nil) {
+        if (error) {
+            NSLog(@"error");
+        } else {
+            NSLog(@"success donated interaction");
+        }
+        //        }
+    }];
+}
+
+- (void)donateSendMessageInteration {
+    SendAnOrderMessageIntent *intent = [[SendAnOrderMessageIntent alloc] init];
+    intent.food = @"cake";
+    //    intent.drink = @"orange";
+    //    intent.suggestedInvocationPhrase = @"Order time";
+    
+    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
+    
+    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
+        //        if (error != nil) {
+        if (error) {
+            NSLog(@"error");
+        } else {
+            NSLog(@"success donated interaction");
+        }
+        //        }
+    }];
+}
+
+- (void)donateInteraction {
+    OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
+    intent.food = @"cake";
+//    intent.drink = @"orange";
+//    intent.suggestedInvocationPhrase = @"Order time";
+    
+    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
+    
+    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
+//        if (error != nil) {
+            if (error) {
+                NSLog(@"error");
+            } else {
+                NSLog(@"success donated interaction");
+            }
+//        }
+    }];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

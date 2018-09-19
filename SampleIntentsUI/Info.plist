@@ -27,6 +27,9 @@
 			<key>IntentsSupported</key>
 			<array>
 				<string>INSendMessageIntent</string>
+				<string>OrderAMenuIntent</string>
+				<string>SendAnOrderMessageIntent</string>
+				<string>SendAnOrderMessageIntentIntent</string>
 			</array>
 		</dict>
 		<key>NSExtensionMainStoryboard</key>

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ITSEncryptionExportComplianceCode</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -20,6 +22,10 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>com.boxyz.duong.SpeechTest</string>
+	</array>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
@@ -36,6 +42,8 @@
 				<string>INSendMessageIntent</string>
 				<string>INSetMessageAttributeIntent</string>
 				<string>OrderAMenuIntent</string>
+				<string>SendAnOrderMessageIntent</string>
+				<string>SendAnOrderMessageIntentIntent</string>
 			</array>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>

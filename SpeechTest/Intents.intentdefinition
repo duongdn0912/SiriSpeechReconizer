@@ -9,7 +9,7 @@
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>17G65</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>10L232m</string>
+	<string>10A254a</string>
 	<key>INIntentDefinitionToolsVersion</key>
 	<string>10.0</string>
 	<key>INIntents</key>
@@ -17,34 +17,91 @@
 		<dict>
 			<key>INIntentCategory</key>
 			<string>order</string>
+			<key>INIntentDefaultImageName</key>
+			<string>Siri_icon</string>
 			<key>INIntentDescription</key>
 			<string>Order a coffee for me</string>
 			<key>INIntentDescriptionID</key>
 			<string>WBGq36</string>
 			<key>INIntentLastParameterTag</key>
-			<integer>0</integer>
+			<integer>4</integer>
 			<key>INIntentName</key>
 			<string>OrderAMenu</string>
 			<key>INIntentParameterCombinations</key>
 			<dict>
-				<key></key>
+				<key>drink</key>
 				<dict>
 					<key>INIntentParameterCombinationIsPrimary</key>
 					<true/>
 					<key>INIntentParameterCombinationSubtitle</key>
 					<string></string>
 					<key>INIntentParameterCombinationSubtitleID</key>
-					<string>KiT2lb</string>
+					<string>Tj5z1q</string>
 					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
 					<true/>
 					<key>INIntentParameterCombinationTitle</key>
-					<string></string>
+					<string>Order a ${drink}for me</string>
 					<key>INIntentParameterCombinationTitleID</key>
-					<string>n1YdJH</string>
+					<string>b8hstF</string>
+				</dict>
+				<key>drink,food</key>
+				<dict>
+					<key>INIntentParameterCombinationIsPrimary</key>
+					<false/>
+					<key>INIntentParameterCombinationSubtitle</key>
+					<string></string>
+					<key>INIntentParameterCombinationSubtitleID</key>
+					<string>EKUgmh</string>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>Order a ${food} with ${drink} for me</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>aHzstU</string>
+				</dict>
+				<key>food</key>
+				<dict>
+					<key>INIntentParameterCombinationIsPrimary</key>
+					<false/>
+					<key>INIntentParameterCombinationSubtitle</key>
+					<string></string>
+					<key>INIntentParameterCombinationSubtitleID</key>
+					<string>GC7kO2</string>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>Order ${food} for me</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>UkCMx2</string>
 				</dict>
 			</dict>
 			<key>INIntentParameters</key>
-			<array/>
+			<array>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>1</integer>
+					<key>INIntentParameterName</key>
+					<string>drink</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>1</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterName</key>
+					<string>food</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>2</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+			</array>
 			<key>INIntentResponse</key>
 			<dict>
 				<key>INIntentResponseCodes</key>
@@ -61,7 +118,7 @@
 					</dict>
 					<dict>
 						<key>INIntentResponseCodeFormatString</key>
-						<string>We have order your menu: ${foodName}</string>
+						<string>Your ${foodName}was ordered and be delivery in ${waitTime}</string>
 						<key>INIntentResponseCodeFormatStringID</key>
 						<string>GeKOeo</string>
 						<key>INIntentResponseCodeName</key>
@@ -71,7 +128,7 @@
 					</dict>
 					<dict>
 						<key>INIntentResponseCodeFormatString</key>
-						<string>Hey, order something else we run out of ${foodName}</string>
+						<string>Hey, order something else we run out of</string>
 						<key>INIntentResponseCodeFormatStringID</key>
 						<string>cCdHZm</string>
 						<key>INIntentResponseCodeName</key>
@@ -81,7 +138,7 @@
 					</dict>
 				</array>
 				<key>INIntentResponseLastParameterTag</key>
-				<integer>1</integer>
+				<integer>3</integer>
 				<key>INIntentResponseParameters</key>
 				<array>
 					<dict>
@@ -95,6 +152,18 @@
 						<integer>1</integer>
 						<key>INIntentResponseParameterType</key>
 						<string>String</string>
+					</dict>
+					<dict>
+						<key>INIntentResponseParameterDisplayPriority</key>
+						<integer>2</integer>
+						<key>INIntentResponseParameterName</key>
+						<string>waitTime</string>
+						<key>INIntentResponseParameterSupportsMultipleValues</key>
+						<false/>
+						<key>INIntentResponseParameterTag</key>
+						<integer>3</integer>
+						<key>INIntentResponseParameterType</key>
+						<string>Integer</string>
 					</dict>
 				</array>
 			</dict>
@@ -110,6 +179,168 @@
 			<true/>
 			<key>INIntentVerb</key>
 			<string>Order</string>
+		</dict>
+		<dict>
+			<key>INIntentCategory</key>
+			<string>generic</string>
+			<key>INIntentDescriptionID</key>
+			<string>K1ye1N</string>
+			<key>INIntentLastParameterTag</key>
+			<integer>2</integer>
+			<key>INIntentName</key>
+			<string>SendAnOrderMessage</string>
+			<key>INIntentParameterCombinations</key>
+			<dict>
+				<key>drink</key>
+				<dict>
+					<key>INIntentParameterCombinationIsPrimary</key>
+					<false/>
+					<key>INIntentParameterCombinationSubtitle</key>
+					<string></string>
+					<key>INIntentParameterCombinationSubtitleID</key>
+					<string>xhKfPT</string>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>I want ${drink}</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>PuJk7c</string>
+				</dict>
+				<key>food</key>
+				<dict>
+					<key>INIntentParameterCombinationIsPrimary</key>
+					<false/>
+					<key>INIntentParameterCombinationSubtitle</key>
+					<string></string>
+					<key>INIntentParameterCombinationSubtitleID</key>
+					<string>iP5omN</string>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>I want ${food}</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>kBTowy</string>
+				</dict>
+				<key>food,drink</key>
+				<dict>
+					<key>INIntentParameterCombinationIsPrimary</key>
+					<true/>
+					<key>INIntentParameterCombinationSubtitle</key>
+					<string></string>
+					<key>INIntentParameterCombinationSubtitleID</key>
+					<string>wy2noS</string>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>I want ${food} with ${drink}</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>zGoVhI</string>
+				</dict>
+			</dict>
+			<key>INIntentParameters</key>
+			<array>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>1</integer>
+					<key>INIntentParameterName</key>
+					<string>food</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>1</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterName</key>
+					<string>drink</string>
+					<key>INIntentParameterSupportsMultipleValues</key>
+					<false/>
+					<key>INIntentParameterTag</key>
+					<integer>2</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+			</array>
+			<key>INIntentResponse</key>
+			<dict>
+				<key>INIntentResponseCodes</key>
+				<array>
+					<dict>
+						<key>INIntentResponseCodeFormatString</key>
+						<string>your order got rejected</string>
+						<key>INIntentResponseCodeFormatStringID</key>
+						<string>P4Sxkf</string>
+						<key>INIntentResponseCodeName</key>
+						<string>failure</string>
+						<key>INIntentResponseCodeSuccess</key>
+						<false/>
+					</dict>
+					<dict>
+						<key>INIntentResponseCodeFormatString</key>
+						<string>Your order is succeeded</string>
+						<key>INIntentResponseCodeFormatStringID</key>
+						<string>d3QcvN</string>
+						<key>INIntentResponseCodeName</key>
+						<string>success</string>
+						<key>INIntentResponseCodeSuccess</key>
+						<true/>
+					</dict>
+					<dict>
+						<key>INIntentResponseCodeFormatString</key>
+						<string></string>
+						<key>INIntentResponseCodeFormatStringID</key>
+						<string>btKDch</string>
+						<key>INIntentResponseCodeName</key>
+						<string>successOna</string>
+						<key>INIntentResponseCodeSuccess</key>
+						<true/>
+					</dict>
+				</array>
+				<key>INIntentResponseLastParameterTag</key>
+				<integer>2</integer>
+				<key>INIntentResponseParameters</key>
+				<array>
+					<dict>
+						<key>INIntentResponseParameterDisplayPriority</key>
+						<integer>1</integer>
+						<key>INIntentResponseParameterName</key>
+						<string>food</string>
+						<key>INIntentResponseParameterSupportsMultipleValues</key>
+						<false/>
+						<key>INIntentResponseParameterTag</key>
+						<integer>1</integer>
+						<key>INIntentResponseParameterType</key>
+						<string>String</string>
+					</dict>
+					<dict>
+						<key>INIntentResponseParameterDisplayPriority</key>
+						<integer>2</integer>
+						<key>INIntentResponseParameterName</key>
+						<string>drink</string>
+						<key>INIntentResponseParameterSupportsMultipleValues</key>
+						<false/>
+						<key>INIntentResponseParameterTag</key>
+						<integer>2</integer>
+						<key>INIntentResponseParameterType</key>
+						<string>String</string>
+					</dict>
+				</array>
+			</dict>
+			<key>INIntentRestrictions</key>
+			<integer>0</integer>
+			<key>INIntentTitle</key>
+			<string>Sent a order to My Great App</string>
+			<key>INIntentTitleID</key>
+			<string>eSBAUo</string>
+			<key>INIntentType</key>
+			<string>Custom</string>
+			<key>INIntentUserConfirmationRequired</key>
+			<false/>
+			<key>INIntentVerb</key>
+			<string>Do</string>
 		</dict>
 	</array>
 </dict>
