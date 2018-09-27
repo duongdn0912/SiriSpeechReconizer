@@ -1,22 +1,29 @@
+#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+#import <Intents/Intents.h>
+
 #import "ViewController.h"
 #import "PXSiriWave.h"
 #import "ApiClients.h"
-#import <Intents/Intents.h>
 #import "OrderAMenuIntent.h"
 #import "SendAnOrderMessageIntent.h"
 
+#define LUIS_API @"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/f49530b9-2871-4d65-9532-a0aeec393a22?subscription-key=1f51c767b9d24b118a7415281806acf7&timezoneOffset=-360&q="
+
 @interface ViewController ()
-    @property (weak, nonatomic) IBOutlet UILabel *regconizedText;
-    @property (weak, nonatomic) IBOutlet UILabel *regconizerStatus;
-    @property (weak, nonatomic) IBOutlet UILabel *regconizerKeyResponse;
-    @end
+@property (weak, nonatomic) IBOutlet UILabel *regconizedText;
+@property (weak, nonatomic) IBOutlet UILabel *regconizerStatus;
+@property (weak, nonatomic) IBOutlet UILabel *regconizerKeyResponse;
+@property (weak, nonatomic) IBOutlet UITextView *responseJson;
+@end
 
 @implementation ViewController
 
-    NSTimer *timer;
-    PXSiriWave *siriWave;
-    NSString *inputText;
-    
+NSTimer *timer;
+PXSiriWave *siriWave;
+NSString *inputText;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -49,86 +56,28 @@
         }
     }];
     
-//    [self donateInteraction];
-//    [self donateRelevantShortcut];
-//    [self donateDefaultSendMessageInteration];
+    self.synthesizer = [[AVSpeechSynthesizer alloc] init];
+    self.synthesizer.delegate = self;
+    
+    //    [self donateInteraction];
+    //    [self donateRelevantShortcut];
+    //    [self donateDefaultSendMessageInteration];
 }
 
-- (void)donateRelevantShortcut {
-    OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
-    intent.food = @"cake";
-    intent.drink = @"cheese";
-    
-    INShortcut *shortcut = [[INShortcut alloc] initWithIntent:intent];
-    
-    INRelevantShortcut *relevantShortcut = [[INRelevantShortcut alloc] initWithShortcut:shortcut];
-    relevantShortcut.relevanceProviders = @[[[INDailyRoutineRelevanceProvider alloc] initWithSituation:INDailyRoutineSituationEvening]];
-    [[INRelevantShortcutStore defaultStore] setRelevantShortcuts:@[relevantShortcut] completionHandler:^(NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"error with donate relevant shortcut");
-        } else {
-            NSLog(@"succeed in donate relevant shortcut");
-        }
-        
-    }];
-    
+-(void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)utterance {
+    NSLog(@"Playback finished");
+    [self startListening];
+    [self startSiriFakeAnimation];
 }
 
-- (void)donateDefaultSendMessageInteration {
-    INSendMessageIntent *intent = [[INSendMessageIntent alloc] init];
-//    intent.food = @"cake";
-    //    intent.drink = @"orange";
-    intent.suggestedInvocationPhrase = @"Order coffee";
+- (void)speechText:(NSString *)text {
     
-    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
-    
-    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
-        //        if (error != nil) {
-        if (error) {
-            NSLog(@"error");
-        } else {
-            NSLog(@"success donated interaction");
-        }
-        //        }
-    }];
-}
-
-- (void)donateSendMessageInteration {
-    SendAnOrderMessageIntent *intent = [[SendAnOrderMessageIntent alloc] init];
-    intent.food = @"cake";
-    //    intent.drink = @"orange";
-    //    intent.suggestedInvocationPhrase = @"Order time";
-    
-    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
-    
-    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
-        //        if (error != nil) {
-        if (error) {
-            NSLog(@"error");
-        } else {
-            NSLog(@"success donated interaction");
-        }
-        //        }
-    }];
-}
-
-- (void)donateInteraction {
-    OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
-    intent.food = @"cake";
-//    intent.drink = @"orange";
-//    intent.suggestedInvocationPhrase = @"Order time";
-    
-    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
-    
-    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
-//        if (error != nil) {
-            if (error) {
-                NSLog(@"error");
-            } else {
-                NSLog(@"success donated interaction");
-            }
-//        }
-    }];
+    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:text];
+//    utterance.rate = 0.5;
+    utterance.pitchMultiplier = 1;
+    //utterance.rate = AVSpeechUtteranceMinimumSpeechRate;
+    utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"ja-JP"];
+    [self.synthesizer speakUtterance:utterance];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -146,6 +95,9 @@
         [usrInfo synchronize];
     }
 }
+
+
+
 
 /*!
  * @brief Starts listening and recognizing user input through the phone's microphone
@@ -214,16 +166,16 @@
 }
 
 - (void)startListenSession {
-    [self startListening];
-    [self startSiriFakeAnimation];
+    [self speechText:@"ご注文をどうぞ"];
 }
-    
+
 - (void)stopListenSession {
     [audioEngine stop];
     [recognitionRequest endAudio];
     self.regconizerStatus.text = @"ボタンを押してください";
     
-    [self pushTextToAPI:inputText];
+    //    [self pushTextToAPI:inputText];
+    [self requestLUISAPI:inputText];
     [self stopSiriFakeAnimation];
 }
 
@@ -237,12 +189,12 @@
 - (void)speechRecognizer:(SFSpeechRecognizer *)speechRecognizer availabilityDidChange:(BOOL)available {
     NSLog(@"Availability:%d",available);
 }
-    
+
 - (void)startSiriFakeAnimation {
     if (siriWave) {
         siriWave.hidden = NO;
     } else {
-         [self.view addSubview: [self createSiriFakeView]];
+        [self.view addSubview: [self createSiriFakeView]];
     }
     
     [self startSiriFakeAnimationTimer];
@@ -267,7 +219,7 @@
     
     return siriWave;
 }
-    
+
 - (void)startSiriFakeAnimationTimer {
     timer = [NSTimer scheduledTimerWithTimeInterval: 0.001
                                              target:self
@@ -278,9 +230,13 @@
 
 - (void)targetMethod:(NSTimer *)timer  {
     siriWave = [timer userInfo];
+//    const double ALPHA = 0.05;
+//    double peakPowerForChannel = pow(10, (0.05 * [audioEngine peakPowerForChannel:0]));
+//    lowPassResults = ALPHA * peakPowerForChannel + (1.0 - ALPHA) * lowPassResults;
+//    [audioEngine ]
     [siriWave updateWithLevel: [self _normalizedPowerLevelFromDecibels: .1]];
 }
-    
+
 - (CGFloat)_normalizedPowerLevelFromDecibels:(CGFloat)decibels {
     if (decibels < -60.0f || decibels == 0.0f) {
         return 0.0f;
@@ -294,11 +250,11 @@
     timer = NULL;
     siriWave.hidden = YES;
 }
-    
-- (void)pushTextToAPI:(NSString *)text {    
+
+- (void)pushTextToAPI:(NSString *)text {
     NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://eastasia.api.cognitive.microsoft.com/text/analytics/v2.0/keyPhrases"]];
-//    NSString *userUpdate =[NSString stringWithFormat:@"{'documents':[{'language': 'ja','id': '1','text':'%@'}]}'", text];
-//    {"documents":[{"language": "ja","id": "1","text": "私はコーヒーが欲しいです"}]}
+    //    NSString *userUpdate =[NSString stringWithFormat:@"{'documents':[{'language': 'ja','id': '1','text':'%@'}]}'", text];
+    //    {"documents":[{"language": "ja","id": "1","text": "私はコーヒーが欲しいです"}]}
     NSDictionary *textInfo= @{ @"language" : @"ja", @"id" : @"1", @"text" : text};
     NSDictionary *tranferData = @{ @"documents" : [NSArray arrayWithObjects:textInfo, nil] };
     
@@ -340,5 +296,136 @@
     
     [dataTask resume];
 }
+
+- (void)requestLUISAPI:(NSString *)inputedRequest{
+    NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", LUIS_API, [inputedRequest stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]]];
+    
+    __block NSString *responseText = @"";
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        if(httpResponse.statusCode == 200) {
+            NSError *parseError = nil;
+            NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
+            //            NSArray *documents = responseDictionary[@"documents"];
+            //            NSArray *keyPhrases = documents.firstObject[@"keyPhrases"];
+            NSDictionary *topScoringIntentData = [responseDictionary valueForKey:@"topScoringIntent"];
+            NSDictionary *topScoringIntentScore = [topScoringIntentData valueForKey:@"score"];
+            NSDictionary *topScoringIntent = [topScoringIntentData valueForKey:@"intent"];
+            
+            NSDictionary *intents = [responseDictionary valueForKey:@"intents"];
+            NSDictionary *query = [responseDictionary valueForKey:@"query"];
+            NSDictionary *entities = [responseDictionary valueForKey:@"entities"];
+            
+            NSString *jsonString;
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:responseDictionary
+                                                               options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+                                                                 error:&error];
+            
+            if (! jsonData) {
+                NSLog(@"Got an error: %@", error);
+            } else {
+                jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+            
+            //            for (NSString *key in keyPhrases) {
+            //            responseText = [responseText stringByAppendingString:[NSString stringWithFormat:@"%@｜", key]];
+            //            }
+            NSLog(@"The response is - %@", responseText);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //                self.regconizerKeyResponse.text = jsonString;
+                self.responseJson.text = jsonString;
+            });
+        }
+        else
+        {
+            NSLog(@"Error");
+        }
+    }];
+    
+    [dataTask resume];
+}
+
+
+
+
+- (void)donateRelevantShortcut {
+    OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
+    intent.food = @"cake";
+    intent.drink = @"cheese";
+    
+    INShortcut *shortcut = [[INShortcut alloc] initWithIntent:intent];
+    
+    INRelevantShortcut *relevantShortcut = [[INRelevantShortcut alloc] initWithShortcut:shortcut];
+    relevantShortcut.relevanceProviders = @[[[INDailyRoutineRelevanceProvider alloc] initWithSituation:INDailyRoutineSituationEvening]];
+    [[INRelevantShortcutStore defaultStore] setRelevantShortcuts:@[relevantShortcut] completionHandler:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"error with donate relevant shortcut");
+        } else {
+            NSLog(@"succeed in donate relevant shortcut");
+        }
+        
+    }];
+    
+}
+
+- (void)donateDefaultSendMessageInteration {
+    INSendMessageIntent *intent = [[INSendMessageIntent alloc] init];
+    //    intent.food = @"cake";
+    //    intent.drink = @"orange";
+    intent.suggestedInvocationPhrase = @"Order coffee";
+    
+    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
+    
+    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
+        //        if (error != nil) {
+        if (error) {
+            NSLog(@"error");
+        } else {
+            NSLog(@"success donated interaction");
+        }
+        //        }
+    }];
+}
+
+- (void)donateSendMessageInteration {
+    SendAnOrderMessageIntent *intent = [[SendAnOrderMessageIntent alloc] init];
+    intent.food = @"cake";
+    //    intent.drink = @"orange";
+    //    intent.suggestedInvocationPhrase = @"Order time";
+    
+    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
+    
+    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
+        //        if (error != nil) {
+        if (error) {
+            NSLog(@"error");
+        } else {
+            NSLog(@"success donated interaction");
+        }
+        //        }
+    }];
+}
+
+- (void)donateInteraction {
+    OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
+    intent.food = @"cake";
+    //    intent.drink = @"orange";
+    //    intent.suggestedInvocationPhrase = @"Order time";
+    
+    INInteraction *interaction = [[INInteraction alloc] initWithIntent:intent response:nil];
+    
+    [interaction donateInteractionWithCompletion:^(NSError * _Nullable error) {
+        //        if (error != nil) {
+        if (error) {
+            NSLog(@"error");
+        } else {
+            NSLog(@"success donated interaction");
+        }
+        //        }
+    }];
+}
+
 
 @end

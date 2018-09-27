@@ -9,6 +9,9 @@
 			<string>INSendMessageIntent</string>
 			<key>IntentExamples</key>
 			<array>
+				<string>My Great Appのメッセージを送って</string>
+				<string>My Great Appで一郎にメッセージを送信</string>
+				<string>Message with My Great App</string>
 				<string>I want to talk to My Great App</string>
 				<string>Order something with My Great App</string>
 			</array>
