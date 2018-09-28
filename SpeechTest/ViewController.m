@@ -10,21 +10,52 @@
 #import "SendAnOrderMessageIntent.h"
 
 #define LUIS_API @"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/f49530b9-2871-4d65-9532-a0aeec393a22?subscription-key=1f51c767b9d24b118a7415281806acf7&timezoneOffset=-360&q="
+#define KEY_ORDER @"注文"
+#define KEY_CANCEL_ORDER @"キャンセル"
+#define KEY_FINISH_ORDER @"終了"
+#define KEY_NONE_ORDER @"None"
+
+#define KEY_RESPONSE_TOPSCOREINTENT @"topScoringIntent"
+#define KEY_RESPONSE_TOPSCOREINTENT_SCORE @"score"
+#define KEY_RESPONSE_TOPSCOREINTENT_INTENT @"intent"
+
+#define KEY_RESPONSE_INTENTS @"intents"
+#define KEY_RESPONSE_QUERY @"query"
+#define KEY_RESPONSE_ENTITIES @"entities"
+
+#define KEY_RESPONSE_ENTITY_CONTENT @"entity"
+#define KEY_RESPONSE_ENTITY_TYPE @"type"
+#define KEY_RESPONSE_ENTITY_TYPE_MENU @"menu"
+#define KEY_RESPONSE_ENTITY_TYPE_NUMBER @"builtin.number"
+#define KEY_RESPONSE_ENTITY_TYPE_NUMBER_ORDER_JP @"numberOfOrder"
+#define KEY_RESPONSE_ENTITY_TYPE_NUMBER_JP @"numberJp"
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *regconizedText;
 @property (weak, nonatomic) IBOutlet UILabel *regconizerStatus;
 @property (weak, nonatomic) IBOutlet UILabel *regconizerKeyResponse;
 @property (weak, nonatomic) IBOutlet UITextView *responseJson;
+@property (weak, nonatomic) IBOutlet UITableView *tableOrderedMenu;
+@property (weak, nonatomic) IBOutlet UIButton *redoOrder;
 @end
+
+typedef NS_ENUM(NSInteger, orderStage) {
+    OrderingFood,
+    CancelingFood,
+    FinishingOrder,
+    ConfirmingOrder,
+    StopOrder
+};
 
 @implementation ViewController
 
-NSTimer *timer;
+NSTimer *siriTimer;
 PXSiriWave *siriWave;
 NSString *inputText;
+NSInteger actionOfOrder;
+NSMutableDictionary *tableViewData;
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     [super viewDidLoad];
     
     // Initialize the Speech Recognizer with the locale, couldn't find a list of locales
@@ -59,65 +90,109 @@ NSString *inputText;
     self.synthesizer = [[AVSpeechSynthesizer alloc] init];
     self.synthesizer.delegate = self;
     
+    self.tableOrderedMenu.dataSource = self;
+    self.tableOrderedMenu.delegate = self;
+    
+    tableViewData = [[NSMutableDictionary alloc] init];
+    
     //    [self donateInteraction];
     //    [self donateRelevantShortcut];
     //    [self donateDefaultSendMessageInteration];
 }
 
--(void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)utterance {
+-(void) speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)utterance {
     NSLog(@"Playback finished");
-    [self startListening];
-    [self startSiriFakeAnimation];
+    if (actionOfOrder != StopOrder) {
+        [self startListening];
+        [self startSiriFakeAnimation];
+    }
 }
 
-- (void)speechText:(NSString *)text {
+- (void) speechText:(NSString *)text {
+    [audioEngine stop];
+    [recognitionRequest endAudio];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.responseJson.text = text;
+        
+        [self.tableOrderedMenu reloadData];
+    });
     
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:text];
 //    utterance.rate = 0.5;
     utterance.pitchMultiplier = 1;
     //utterance.rate = AVSpeechUtteranceMinimumSpeechRate;
+    utterance.volume = 1;
     utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"ja-JP"];
     [self.synthesizer speakUtterance:utterance];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    NSUserDefaults * usrInfo = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.boxyz.sirikit.SpeechTest"];
-    [usrInfo synchronize];// This is the new data;
-    BOOL isNewDataSent = [usrInfo boolForKey:@"ISNEWDATASENT"];
-    NSString *siriInputedData = [usrInfo valueForKey:@"siriInputedData"];
-    
-    if (isNewDataSent) {
-        self.regconizedText.text = siriInputedData;
-        [self pushTextToAPI:siriInputedData];
-        [usrInfo setBool:NO forKey:@"ISNEWDATASENT"];  // This is the new data;
-        [usrInfo synchronize];
-    }
+    [self speechText:@"ご注文をどうぞ"];
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [tableViewData count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *MyIdentifier = @"cellReuseIdentifier";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+    
+    if (cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
+    }
+    
+    // Here we use the provided setImageWithURL: method to load the web image
+    // Ensure you use a placeholder image otherwise cells will be initialized with no image
+    UILabel *lblMenuName = [cell viewWithTag:2];
+    UILabel *lblMenuQuantity = [cell viewWithTag:3];
+//    [tableViewData object]
+    
+    NSString *menuName = [tableViewData allKeys][indexPath.row];
+    NSNumber *menuQuantity = [tableViewData objectForKey:menuName];
+    lblMenuName.text = menuName;
+    lblMenuQuantity.text = [menuQuantity stringValue];
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 80;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+}
 
 
 /*!
  * @brief Starts listening and recognizing user input through the phone's microphone
  */
 
-- (void)startListening {
+- (void) startListening {
     
     // Initialize the AVAudioEngine
     audioEngine = [[AVAudioEngine alloc] init];
     
+    
     // Make sure there's not a recognition task already running
-    if (recognitionTask) {
+    if (recognitionTask || recognitionRequest) {
         [recognitionTask cancel];
         recognitionTask = nil;
+        recognitionRequest = nil;
     }
     
     // Starts an AVAudio Session
     NSError *error;
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    [audioSession setCategory:AVAudioSessionCategoryRecord error:&error];
+    [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
     [audioSession setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&error];
     
     // Starts a recognition process, in the block it logs the input or stops the audio
@@ -125,18 +200,37 @@ NSString *inputText;
     recognitionRequest = [[SFSpeechAudioBufferRecognitionRequest alloc] init];
     AVAudioInputNode *inputNode = audioEngine.inputNode;
     recognitionRequest.shouldReportPartialResults = YES;
+    __block NSTimer *stopRegconitionWhenNotInputTimer;
+    __block BOOL isSentLUIS = NO;
     recognitionTask = [speechRecognizer recognitionTaskWithRequest:recognitionRequest resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) {
-        BOOL isFinal = NO;
+        __block BOOL isFinal = NO;
+        NSString* resultText;
         if (result) {
             // Whatever you say in the mic after pressing the button should be being logged
             // in the console.
-            NSString* resultText = result.bestTranscription.formattedString;
+            resultText = result.bestTranscription.formattedString;
             NSLog(@"RESULT:%@",resultText);
-            self.regconizedText.text = resultText;
+            
             inputText = resultText;
-            isFinal = !result.isFinal;
+            isFinal = result.isFinal;
         }
-        if (error) {
+        
+        if (stopRegconitionWhenNotInputTimer.isValid) {
+            if (isFinal) {
+                [stopRegconitionWhenNotInputTimer invalidate];
+            }
+        } else {
+            stopRegconitionWhenNotInputTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
+                if (!isSentLUIS) {
+                    isSentLUIS = YES;
+                    [self stopListenSession];
+                    isFinal = YES;
+                    [stopRegconitionWhenNotInputTimer invalidate];
+                }
+            }];
+        }
+        
+        if (error || isFinal) {
             [audioEngine stop];
             [inputNode removeTapOnBus:0];
             recognitionRequest = nil;
@@ -157,7 +251,7 @@ NSString *inputText;
     self.regconizerStatus.text = @"ボタンを押して、サーバに出す";
 }
 
-- (IBAction)microPhoneTapped:(id)sender {
+- (IBAction) microPhoneTapped:(id)sender {
     if (audioEngine.isRunning) {
         [self stopListenSession];
     } else {
@@ -165,28 +259,31 @@ NSString *inputText;
     }
 }
 
-- (void)startListenSession {
-    [self speechText:@"ご注文をどうぞ"];
+- (void) startListenSession {
+//    [self speechText:@"ご注文をどうぞ"];
+    [self startListening];
+    [self startSiriFakeAnimation];
 }
 
-- (void)stopListenSession {
+- (void) stopListenSession {
     [audioEngine stop];
     [recognitionRequest endAudio];
-    self.regconizerStatus.text = @"ボタンを押してください";
+//    self.regconizerStatus.text = @"ボタンを押してください";
     
     //    [self pushTextToAPI:inputText];
+    self.regconizedText.text = inputText;
     [self requestLUISAPI:inputText];
     [self stopSiriFakeAnimation];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void) didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - SFSpeechRecognizerDelegate Delegate Methods
 
-- (void)speechRecognizer:(SFSpeechRecognizer *)speechRecognizer availabilityDidChange:(BOOL)available {
+- (void) speechRecognizer:(SFSpeechRecognizer *)speechRecognizer availabilityDidChange:(BOOL)available {
     NSLog(@"Availability:%d",available);
 }
 
@@ -200,7 +297,7 @@ NSString *inputText;
     [self startSiriFakeAnimationTimer];
 }
 
-- (UIView *)createSiriFakeView {
+- (UIView *) createSiriFakeView {
     CGFloat siriWidth = self.view.frame.size.width;
     CGFloat siriHeight = 80;
     CGFloat siriFrameY = self.view.frame.size.height - siriHeight;
@@ -220,15 +317,15 @@ NSString *inputText;
     return siriWave;
 }
 
-- (void)startSiriFakeAnimationTimer {
-    timer = [NSTimer scheduledTimerWithTimeInterval: 0.001
+- (void) startSiriFakeAnimationTimer {
+    siriTimer = [NSTimer scheduledTimerWithTimeInterval: 0.001
                                              target:self
                                            selector: @selector(targetMethod:)
                                            userInfo: siriWave
                                             repeats:YES];
 }
 
-- (void)targetMethod:(NSTimer *)timer  {
+- (void) targetMethod:(NSTimer *)timer  {
     siriWave = [timer userInfo];
 //    const double ALPHA = 0.05;
 //    double peakPowerForChannel = pow(10, (0.05 * [audioEngine peakPowerForChannel:0]));
@@ -237,7 +334,7 @@ NSString *inputText;
     [siriWave updateWithLevel: [self _normalizedPowerLevelFromDecibels: .1]];
 }
 
-- (CGFloat)_normalizedPowerLevelFromDecibels:(CGFloat)decibels {
+- (CGFloat) _normalizedPowerLevelFromDecibels:(CGFloat)decibels {
     if (decibels < -60.0f || decibels == 0.0f) {
         return 0.0f;
     }
@@ -245,13 +342,13 @@ NSString *inputText;
     return powf((powf(10.0f, 0.05f * decibels) - powf(10.0f, 0.05f * -60.0f)) * (1.0f / (1.0f - powf(10.0f, 0.05f * -60.0f))), 1.0f / 2.0f);
 }
 
-- (void)stopSiriFakeAnimation {
-    [timer invalidate];
-    timer = NULL;
+- (void) stopSiriFakeAnimation {
+    [siriTimer invalidate];
+    siriTimer = NULL;
     siriWave.hidden = YES;
 }
 
-- (void)pushTextToAPI:(NSString *)text {
+- (void) pushTextToAPI:(NSString *)text {
     NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://eastasia.api.cognitive.microsoft.com/text/analytics/v2.0/keyPhrases"]];
     //    NSString *userUpdate =[NSString stringWithFormat:@"{'documents':[{'language': 'ja','id': '1','text':'%@'}]}'", text];
     //    {"documents":[{"language": "ja","id": "1","text": "私はコーヒーが欲しいです"}]}
@@ -297,7 +394,7 @@ NSString *inputText;
     [dataTask resume];
 }
 
-- (void)requestLUISAPI:(NSString *)inputedRequest{
+- (void) requestLUISAPI:(NSString *)inputedRequest{
     NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", LUIS_API, [inputedRequest stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]]];
     
     __block NSString *responseText = @"";
@@ -307,36 +404,31 @@ NSString *inputText;
         if(httpResponse.statusCode == 200) {
             NSError *parseError = nil;
             NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
-            //            NSArray *documents = responseDictionary[@"documents"];
-            //            NSArray *keyPhrases = documents.firstObject[@"keyPhrases"];
-            NSDictionary *topScoringIntentData = [responseDictionary valueForKey:@"topScoringIntent"];
-            NSDictionary *topScoringIntentScore = [topScoringIntentData valueForKey:@"score"];
-            NSDictionary *topScoringIntent = [topScoringIntentData valueForKey:@"intent"];
             
-            NSDictionary *intents = [responseDictionary valueForKey:@"intents"];
-            NSDictionary *query = [responseDictionary valueForKey:@"query"];
-            NSDictionary *entities = [responseDictionary valueForKey:@"entities"];
-            
-            NSString *jsonString;
-            NSError *error;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:responseDictionary
-                                                               options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
-                                                                 error:&error];
-            
-            if (! jsonData) {
-                NSLog(@"Got an error: %@", error);
-            } else {
-                jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            if (responseDictionary) {
+                [self navigateRequest:responseDictionary];
             }
             
-            //            for (NSString *key in keyPhrases) {
-            //            responseText = [responseText stringByAppendingString:[NSString stringWithFormat:@"%@｜", key]];
-            //            }
-            NSLog(@"The response is - %@", responseText);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //                self.regconizerKeyResponse.text = jsonString;
-                self.responseJson.text = jsonString;
-            });
+//            NSString *jsonString;
+//            NSError *error;
+//            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:responseDictionary
+//                                                               options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+//                                                                 error:&error];
+//
+//            if (! jsonData) {
+//                NSLog(@"Got an error: %@", error);
+//            } else {
+//                jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//            }
+//
+//            //            for (NSString *key in keyPhrases) {
+//            //            responseText = [responseText stringByAppendingString:[NSString stringWithFormat:@"%@｜", key]];
+//            //            }
+//            NSLog(@"The response is - %@", responseText);
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                //                self.regconizerKeyResponse.text = jsonString;
+//                self.responseJson.text = jsonString;
+//            });
         }
         else
         {
@@ -347,10 +439,148 @@ NSString *inputText;
     [dataTask resume];
 }
 
+- (void) navigateRequest:(NSDictionary *)responseDictionary {
+    NSDictionary *topScoringIntentData = [responseDictionary valueForKey:KEY_RESPONSE_TOPSCOREINTENT];
+    NSDictionary *topScoringIntentScore = [topScoringIntentData valueForKey:KEY_RESPONSE_TOPSCOREINTENT_SCORE];
+    NSString *topScoringIntent = [topScoringIntentData valueForKey:KEY_RESPONSE_TOPSCOREINTENT_INTENT];
+    
+    NSDictionary *intents = [responseDictionary valueForKey:KEY_RESPONSE_INTENTS];
+    NSDictionary *query = [responseDictionary valueForKey:KEY_RESPONSE_QUERY];
+    NSDictionary *entities = [responseDictionary valueForKey:KEY_RESPONSE_ENTITIES];
+    
+//    [self stopListenSession];
+    if ([topScoringIntent isEqualToString:KEY_ORDER]) {
+        [self preparingOrderMenus:entities];
+    } else if ([topScoringIntent isEqualToString:KEY_CANCEL_ORDER]) {
+        [self cancelingOrderMenus:entities];
+    } else if ([topScoringIntent isEqualToString:KEY_FINISH_ORDER]) {
+        [self finishOrder];
+    } else if ([topScoringIntent isEqualToString:KEY_NONE_ORDER]) {
+        if (actionOfOrder == FinishingOrder) {
+            if ([query isEqual:@"はい"]) {
+                NSString *speechPhrase = @"注文を完了しました。";
+                [self speechText:speechPhrase];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.redoOrder.hidden = NO;
+                });
+                actionOfOrder = StopOrder;
+            } else {
+                NSString *speechPhrase = @"ご注文をどうぞ";
+                [self speechText:speechPhrase];
+                actionOfOrder = OrderingFood;
+            }
+        } else {
+            [self confirmOrder];
+        }
+    }
+}
+
+- (void) preparingOrderMenus:(NSDictionary *)entities {
+    NSLog(@"%s", __func__);
+    
+    NSMutableArray *menus = [[NSMutableArray alloc] init];
+    NSMutableArray *quantities = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *entity in entities) {
+        if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_MENU]) {
+            [menus addObject:[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT]];
+        } else if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER]
+                   || [[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_JP]
+                   || [[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_ORDER_JP]) {
+            if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_ORDER_JP]) {
+                NSString* numberOfOrder = [[[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT] componentsSeparatedByString:@"個"] firstObject];
+                [quantities addObject:numberOfOrder];
+            } else if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_JP]) {
+                NSString* numberOfOrder = [[[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT] componentsSeparatedByString:@"つ"] firstObject];
+                [quantities addObject:numberOfOrder];
+            } else {
+                [quantities addObject:[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT]];
+            }
+        }
+    }
+    
+    [self orderMenu:menus quantity:quantities];
+}
+
+- (void) cancelingOrderMenus:(NSDictionary *)entities {
+    NSLog(@"%s", __func__);
+    
+    NSMutableArray *menus = [[NSMutableArray alloc] init];
+    NSMutableArray *quantities = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *entity in entities) {
+        if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_MENU]) {
+            [menus addObject:[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT]];
+        } else if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER]
+                   || [[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_JP]
+                   || [[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_ORDER_JP]) {
+            if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_ORDER_JP]) {
+                NSString* numberOfOrder = [[[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT] componentsSeparatedByString:@"個"] firstObject];
+                [quantities addObject:numberOfOrder];
+            } else if ([[entity objectForKey:KEY_RESPONSE_ENTITY_TYPE] isEqualToString:KEY_RESPONSE_ENTITY_TYPE_NUMBER_JP]) {
+                NSString* numberOfOrder = [[[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT] componentsSeparatedByString:@"つ"] firstObject];
+                [quantities addObject:numberOfOrder];
+            } else {
+                [quantities addObject:[entity objectForKey:KEY_RESPONSE_ENTITY_CONTENT]];
+            }
+        }
+    }
+    
+    [self cancelMenu:menus quantity:quantities];
+}
+
+- (void) orderMenu:(NSArray *)foodName quantity:(NSArray *)quantity {
+    NSString *food = [foodName count] != 0 ? [foodName firstObject] : @"";
+    NSInteger number = [quantity count] != 0 ? [[quantity firstObject] integerValue] : 1;
+    
+    NSInteger foodQuantity = [[tableViewData objectForKey:food] integerValue];
+    if (foodQuantity >= 0) {
+        foodQuantity = foodQuantity + number;
+        [tableViewData removeObjectForKey:food];
+        [tableViewData setValue:[NSNumber numberWithInteger:foodQuantity]  forKey:food];
+    } else {
+        [tableViewData setValue:[NSNumber numberWithInteger:number]  forKey:food];
+    }
+    NSString *speechPhrase = [NSString stringWithFormat:@"%@を%ldですね。他にご注文・キャンセルはありますか？", food, (long)number];
+    [self speechText:speechPhrase];
+    actionOfOrder = OrderingFood;
+}
+
+- (void) cancelMenu:(NSArray *)foodName quantity:(NSArray *)quantity {
+    NSString *food = [foodName count] != 0 ? [foodName firstObject] : @"";
+    NSInteger number = [quantity count] != 0 ? [[quantity firstObject] integerValue] : 1;
+    
+    if ([food isEqualToString:@""]) {
+        [self confirmOrder];
+    } else {
+        NSInteger foodQuantity = [[tableViewData objectForKey:food] integerValue];
+        NSInteger numberOfOrderAfterCancel = foodQuantity - number;
+        
+        [tableViewData removeObjectForKey:food];
+        if (numberOfOrderAfterCancel > 0) {
+            [tableViewData setValue:[NSNumber numberWithInteger:numberOfOrderAfterCancel]  forKey:food];
+        }
+        NSString *speechPhrase = [NSString stringWithFormat:@"%@を%ldキャンセルですね。他にご注文・キャンセルはありますか？", food, (long)number];
+        [self speechText:speechPhrase];
+        actionOfOrder = CancelingFood;
+    }
+}
+
+- (void) finishOrder {
+    NSString *speechPhrase = [NSString stringWithFormat:@"表示されている注文内容をご確認ください。よろしければ”はい”と言ってください"];
+    [self speechText:speechPhrase];
+   
+    actionOfOrder = FinishingOrder;
+}
+
+- (void) confirmOrder {
+    NSString *speechPhrase = [NSString stringWithFormat:@"すみません、聞き取れませんでした。他にご注文は？"];
+    [self speechText:speechPhrase];
+    actionOfOrder = ConfirmingOrder;
+}
 
 
-
-- (void)donateRelevantShortcut {
+- (void) donateRelevantShortcut {
     OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
     intent.food = @"cake";
     intent.drink = @"cheese";
@@ -370,7 +600,7 @@ NSString *inputText;
     
 }
 
-- (void)donateDefaultSendMessageInteration {
+- (void) donateDefaultSendMessageInteration {
     INSendMessageIntent *intent = [[INSendMessageIntent alloc] init];
     //    intent.food = @"cake";
     //    intent.drink = @"orange";
@@ -389,7 +619,7 @@ NSString *inputText;
     }];
 }
 
-- (void)donateSendMessageInteration {
+- (void) donateSendMessageInteration {
     SendAnOrderMessageIntent *intent = [[SendAnOrderMessageIntent alloc] init];
     intent.food = @"cake";
     //    intent.drink = @"orange";
@@ -408,7 +638,7 @@ NSString *inputText;
     }];
 }
 
-- (void)donateInteraction {
+- (void) donateInteraction {
     OrderAMenuIntent *intent = [[OrderAMenuIntent alloc] init];
     intent.food = @"cake";
     //    intent.drink = @"orange";
@@ -425,6 +655,14 @@ NSString *inputText;
         }
         //        }
     }];
+}
+- (IBAction)redoOrderTapped:(id)sender {
+    [tableViewData removeAllObjects];
+    [self.tableOrderedMenu reloadData];
+    NSString *speechPhrase = @"ご注文をどうぞう";
+    [self speechText:speechPhrase];
+    actionOfOrder = OrderingFood;
+    self.redoOrder.hidden = YES;
 }
 
 
